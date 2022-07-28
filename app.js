@@ -49,42 +49,45 @@ function nftData(num) {
         })
 }
 
-function cryptoData() {
-    fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=ethereum&order=market_cap_desc&per_page=100&page=1&sparkline=false')
+function cryptoData(num) {
+    const coins = ['ethereum', 'ethereum-name-service', 'matic-network', 'maker', 'solana', 'bitcoin']
+    fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coins[num]}&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
         .then((response) => response.json())
         .then((data) => {
-            let price = `Current Price: $${data[0].current_price}`
-            let priceChangePercent = `24h Price Change(%): ${data[0].price_change_percentage_24h.toFixed(2)}%`
-            let priceChange = `24h Price Change($): $${data[0].price_change_24h.toFixed(2)}`
+            let name = data[0].name
+            let image = data[0].image
+            let price = `Current Price: $${data[0].current_price.toFixed(2)}`
+            let priceChangePercent = `24h Percent Change: ${data[0].price_change_percentage_24h.toFixed(2)}%`
+            let priceChange = `24h Price Change: $${data[0].price_change_24h.toFixed(2)}`
+            $('.coin-img').html(
+                `<img class="card-img-top w-50 h-50 rounded" src="${image}" alt="nft image"></img>`
+            )
+            $('.coin-name').text(name)
             $('.price').text(price)
             $('.changeD').text(priceChange)
             $('.changeP').text(priceChangePercent)
-            console.log("Retrieved Ethereum data from https://api.coingecko.com/api/v3/coins/markets")
+            console.log(`Retrieved ${coins[num]} data from https://api.coingecko.com/api/v3/coins/markets`)
         })
 }
-
+let c = [0, 1, 2, 3, 4, 5]
 const get_Eth = setInterval(function() {
-    cryptoData()
-}, 60000)
-a = [0, 1, 2, 3, 4, 5]
+    let d = c.pop()
+    cryptoData(d)
+    if (d == 0) {
+        c = [0, 1, 2, 3, 4, 5]
+    }
+}, 5000)
+let a = [0, 1, 2, 3, 4, 5]
 const get_Nft = setInterval(function() {
-    b = a.pop()
+    let b = a.pop()
     nftData(b)
     if (b == 0) {
         a = [0, 1, 2, 3, 4, 5]
     }
-}, 10000)
-
-
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-  }
-
+}, 5000)
 
 $(document).ready(function(){
-    cryptoData()
+    cryptoData(0)
     nftData(0)
 })
 

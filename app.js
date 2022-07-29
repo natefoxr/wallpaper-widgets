@@ -26,9 +26,8 @@ function showTime() {
 }
 showTime();
 
-function nftData(num) {
-    const nfts = ['foxyfamnft', 'boredapeyachtclub', 'mutant-ape-yacht-club', 'guttercatgang', 'doodles-official', 'join-alienverse-nft']
-    fetch(`https://api.opensea.io/api/v1/collection/${nfts[num]}`)
+function nftData(nft) {
+    fetch(`https://api.opensea.io/api/v1/collection/${nft}`)
         .then((response) => response.json())
         .then((data) => {
             let collection = data.collection
@@ -45,13 +44,12 @@ function nftData(num) {
             $('.nft-name').text(`Collection: ${name}`)
             $('.volume').text(`Total Volume: ${volume} ETH`)
             $('.30-sales').text(`30 Day Sales: ${thirtyDaySales}`)
-            console.log(`Retrieved data from https://api.opensea.io/api/v1/collection/${nfts[num]}`)
+            console.log(`Retrieved data from https://api.opensea.io/api/v1/collection/${nft}`)
         })
 }
 
-function cryptoData(num) {
-    const coins = ['ethereum', 'ethereum-name-service', 'matic-network', 'maker', 'solana', 'bitcoin']
-    fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coins[num]}&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
+function cryptoData(coin) {
+    fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coin}&order=market_cap_desc&per_page=100&page=1&sparkline=false`)
         .then((response) => response.json())
         .then((data) => {
             let name = data[0].name
@@ -66,29 +64,34 @@ function cryptoData(num) {
             $('.price').text(price)
             $('.changeD').text(priceChange)
             $('.changeP').text(priceChangePercent)
-            console.log(`Retrieved ${coins[num]} data from https://api.coingecko.com/api/v3/coins/markets`)
+            console.log(`Retrieved ${coin} data from https://api.coingecko.com/api/v3/coins/markets`)
         })
 }
-let c = [0, 1, 2, 3, 4, 5]
+// #TODO: FIX THIS ITTERATION
+
+let c = [...COIN_SLUGS]
 const get_Eth = setInterval(function() {
     let d = c.pop()
     cryptoData(d)
-    if (d == 0) {
-        c = [0, 1, 2, 3, 4, 5]
+    console.log(COIN_SLUGS)
+    if (c.length === 0) {
+        c = [...COIN_SLUGS]
     }
 }, 5000)
-let a = [0, 1, 2, 3, 4, 5]
+let a = [...NFT_SLUGS]
 const get_Nft = setInterval(function() {
     let b = a.pop()
     nftData(b)
-    if (b == 0) {
-        a = [0, 1, 2, 3, 4, 5]
+    console.log(NFT_SLUGS)
+    if (a.length === 0) {
+        a = [...NFT_SLUGS]
     }
 }, 5000)
 
 $(document).ready(function(){
-    cryptoData(0)
-    nftData(0)
+    cryptoData(COIN_SLUGS[0])
+    nftData(NFT_SLUGS[0])
+    $('.github-graph').replaceWith(`<img src="https://ghchart.rshah.org/${GITHUB_USERNAME}" alt="2022 ${GITHUB_USERNAME} Github chart" class="github-graph">`)
 })
 
 
